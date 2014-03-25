@@ -77,18 +77,21 @@ def select_folders():
 
 ensure_dir(os.path.join(in_dir, out_dir))
 selection = select_folders()
-g = open(os.path.join(in_dir, out_dir, 
-    '%s.m3u' % datetime.date.today()), 'w')
+g = open(os.path.join(in_dir, out_dir, '%s.m3u' % datetime.date.today()), 'w')
 for sel in selection:
     folder = sorted(sets.keys(), key=lambda x: x.lower())[sel]
     files = sets[folder]
     for i in range(setlength):
         file = choose_and_remove(files)
         ensure_dir(os.path.join(in_dir, folder, inplaylist))
-        shutil.move(
-            os.path.join(in_dir, folder, file), 
-            os.path.join(in_dir, folder, inplaylist, file)
-        )
+        if not file:
+            print('Warning: "%s" has had not enough songs' % folder)
+            break
+        else:
+            shutil.move(
+                os.path.join(in_dir, folder, file), 
+                os.path.join(in_dir, folder, inplaylist, file)
+            )
         g.write('..\\%s\\%s\\%s\n' % (folder, inplaylist, file))
     g.write('..\\%s\\%s\n' % (cortina_dir, cortina))
 g.close()
