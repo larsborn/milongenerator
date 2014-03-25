@@ -56,12 +56,12 @@ def show_folders(sets, selection):
             print('%3i. %s' % (i, 'VERZEICHNIS MIT VIELEN SONDERZEICHEN'))
             
         i += 1
-    print('Select track number, -1 to delete last, 0 to finish')
+    print('Select track number, -2 to move songs back, -1 to delete last, 0 to finish')
     try:
         sel = int(input('['+', '.join(['%i'%(k+1) for k in selection])+'] '))
     except ValueError:
         return None
-    if sel < -1: return None
+    if sel < -2: return None
     if sel >= i: return None
     return sel
 
@@ -72,26 +72,37 @@ def select_folders():
         sel = show_folders(sets, selection)
         if sel == -1: 
             if selection: selection = selection[:-1]
+        elif sel == -2:
+            selection = None
+            for folder in os.listdir(in_dir):
+                inplaylist_dir = os.path.join(in_dir, folder, inplaylist)
+                if os.path.exists(inplaylist_dir):
+                    for file in os.listdir(inplaylist_dir):
+                        shutil.move(os.path.join(inplaylist_dir, file), \
+                            os.path.join(in_dir, folder, file))
+            print 'All files moved back from %s-directories' % inplaylist
+            break
         elif sel: selection.append(sel-1)
     return selection
 
 ensure_dir(os.path.join(in_dir, out_dir))
 selection = select_folders()
-g = open(os.path.join(in_dir, out_dir, '%s.m3u' % datetime.date.today()), 'w')
-for sel in selection:
-    folder = sorted(sets.keys(), key=lambda x: x.lower())[sel]
-    files = sets[folder]
-    for i in range(setlength):
-        file = choose_and_remove(files)
-        ensure_dir(os.path.join(in_dir, folder, inplaylist))
-        if not file:
-            print('Warning: "%s" has had not enough songs' % folder)
-            break
-        else:
-            shutil.move(
-                os.path.join(in_dir, folder, file), 
-                os.path.join(in_dir, folder, inplaylist, file)
-            )
-        g.write('..\\%s\\%s\\%s\n' % (folder, inplaylist, file))
-    g.write('..\\%s\\%s\n' % (cortina_dir, cortina))
-g.close()
+if selection:
+    g = open(os.path.join(in_dir, out_dir, '%s.m3u' % datetime.date.today()), 'w')
+    for sel in selection:
+        folder = sorted(sets.keys(), key=lambda x: x.lower())[sel]
+        files = sets[folder]
+        for i in range(setlength):
+            file = choose_and_remove(files)
+            ensure_dir(os.path.join(in_dir, folder, inplaylist))
+            if not file:
+                print('Warning: "%s" has had not enough songs' % folder)
+                break
+            else:
+                shutil.move(
+                    os.path.join(in_dir, folder, file), 
+                    os.path.join(in_dir, folder, inplaylist, file)
+                )
+            g.write('..\\%s\\%s\\%s\n' % (folder, inplaylist, file))
+        g.write('..\\%s\\%s\n' % (cortina_dir, cortina))
+    g.close()
