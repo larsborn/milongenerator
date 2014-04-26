@@ -60,7 +60,7 @@ def show_folders(sets, selection):
     print('Select track number, -2 to move songs back, -1 to delete last, 0 to finish')
     try:
         sel = int(input('['+', '.join(['%i'%(k+1) for k in selection])+'] '))
-    except ValueError:
+    except:
         return None
     if sel < -2: return None
     if sel >= i: return None
