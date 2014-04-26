@@ -37,6 +37,7 @@ for folder in os.listdir(in_dir):
 
 # cortina
 try:
+    ensure_dir(os.path.join(in_dir, cortina_dir))
     cortina = os.listdir(os.path.join(in_dir, cortina_dir))[0]
 except IndexError:
     s = '!!! Cortina missing :-( !!!'
