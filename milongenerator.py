@@ -81,7 +81,7 @@ def select_folders():
                     for file in os.listdir(inplaylist_dir):
                         shutil.move(os.path.join(inplaylist_dir, file), \
                             os.path.join(in_dir, folder, file))
-            print 'All files moved back from %s-directories' % inplaylist
+            print('All files moved back from %s-directories' % inplaylist)
             break
         elif sel: selection.append(sel-1)
     return selection
