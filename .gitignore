@@ -1,3 +1,7 @@
+/cortina
+/Playlists
+/ExampleFolder*
+
 *.py[cod]
 
 # C extensions
